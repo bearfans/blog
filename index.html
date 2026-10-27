@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="wechat-writer">
+<title>慢慢写</title>
+<meta name="description" content="一个用文字记录生活与思考的地方。">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #737981;
+    --green: #07c160;
+    --green-dark: #06ad56;
+    --line: rgba(31, 35, 40, 0.09);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 8% 0%, rgba(7, 193, 96, 0.08), transparent 26%),
+      radial-gradient(circle at 92% 6%, rgba(255, 187, 74, 0.11), transparent 24%),
+      var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .site-header {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 66px 26px 30px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--green-dark);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--green);
+  }
+  .site-header h1 {
+    margin: 18px 0 12px;
+    font-size: clamp(34px, 6.5vw, 58px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 850;
+    color: #171b1f;
+  }
+  .site-header p {
+    max-width: 620px;
+    margin: 0;
+    color: #626970;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .stats {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 8px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    color: #71777e;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .stats .pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px rgba(7, 193, 96, 0.12);
+  }
+  .masonry {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 26px 84px;
+    column-count: 3;
+    column-gap: 26px;
+  }
+  .card {
+    break-inside: avoid;
+    margin: 0 0 26px;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 17px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(31, 35, 40, 0.045);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 44px rgba(31, 35, 40, 0.10), 0 3px 10px rgba(31, 35, 40, 0.045);
+  }
+  .card > a {
+    display: block;
+    text-decoration: none;
+  }
+  .card-cover {
+    aspect-ratio: 16 / 9;
+    background: #e7e9e8;
+    overflow: hidden;
+  }
+  .card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .card:hover .card-cover img { transform: scale(1.035); }
+  .card-body { padding: 20px 21px 22px; }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    color: #8a9097;
+    font-size: 11.5px;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+  }
+  .latest {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--green);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .card-title {
+    margin: 13px 0 10px;
+    font-size: 21px;
+    line-height: 1.45;
+    font-weight: 760;
+    letter-spacing: -0.01em;
+    color: #1b1f23;
+  }
+  .card-summary {
+    margin: 0 0 16px;
+    color: #626970;
+    font-size: 14px;
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 17px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #f2f5f3;
+    color: #4f5953;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+  .card-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--green-dark);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .card-more svg { transition: transform 0.2s ease; }
+  .card:hover .card-more svg { transform: translateX(3px); }
+  .empty {
+    column-span: all;
+    margin: 20px 0;
+    padding: 68px 24px;
+    border: 1px dashed rgba(31, 35, 40, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.46);
+    text-align: center;
+  }
+  .empty h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    line-height: 1.5;
+    color: #30363c;
+  }
+  .empty p {
+    margin: 0;
+    color: #7c8289;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .empty code {
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: #e9ece9;
+    color: #43614f;
+    font-size: 12.5px;
+  }
+  .site-footer {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 26px 54px;
+    color: #9aa0a6;
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+  }
+  @media (max-width: 980px) {
+    .masonry { column-count: 2; }
+  }
+  @media (max-width: 640px) {
+    .site-header { padding: 44px 18px 22px; }
+    .site-header p { font-size: 15px; }
+    .masonry { column-count: 1; padding: 12px 14px 60px; }
+    .card { margin-bottom: 18px; }
+    .site-footer { padding: 0 18px 38px; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="eyebrow">WECHAT · NOTES</div>
+  <h1>慢慢写</h1>
+  <p>把日子里的想法，写成有人味儿的文章。</p>
+  <div class="stats">
+    <span class="pulse"></span>
+    <span>1 篇文章</span>
+    <span>·</span>
+    <span>最新更新 2026.10.27</span>
+  </div>
+</header>
+
+<main class="masonry" id="article-grid">
+<article class="card" data-wechat-article="mhi2q-carplay-altscreen">
+  <a href="articles/mhi2q-carplay-altscreen.html">
+    <div class="card-cover">
+      <img src="assets/images/mhi2q-carplay-altscreen/cover.jpg" alt="CarPlay 导航显示在奥迪虚拟座舱仪表盘上" loading="eager">
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="latest">最新</span>
+        <time datetime="2026-10-27T07:45:00.000Z">2026.10.27</time>
+        <span>·</span>
+        <span>3 分钟</span>
+      </div>
+      <h2 class="card-title">奥迪仪表盘，终于能显示 CarPlay 导航了</h2>
+      <p class="card-summary">原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。</p>
+      <div class="card-tags"><span class="tag">汽车</span><span class="tag">CarPlay</span><span class="tag">开源</span><span class="tag">奥迪</span></div>
+      <span class="card-more">阅读全文 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+</article>
+</main>
+
+<footer class="site-footer">文字是慢的，但会留下来。</footer>
+</body>
+</html>

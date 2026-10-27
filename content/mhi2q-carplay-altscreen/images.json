@@ -1,0 +1,31 @@
+{
+  "slug": "mhi2q-carplay-altscreen",
+  "generatedAt": "2026-10-27T07:45:00.000Z",
+  "provider": "repo-images",
+  "cover": {
+    "file": "assets/images/mhi2q-carplay-altscreen/cover.jpg",
+    "width": 1536,
+    "height": 864,
+    "alt": "CarPlay 导航显示在奥迪虚拟座舱仪表盘上",
+    "caption": "",
+    "prompt": "source: README 实车效果图"
+  },
+  "inline": [
+    {
+      "file": "assets/images/mhi2q-carplay-altscreen/inline-1.jpg",
+      "width": 1230,
+      "height": 573,
+      "alt": "第三方网站搬运本项目后挂出的下载页面",
+      "caption": "有人把项目改头换面，抹掉作者署名挂出去收费。",
+      "prompt": "source: docs/vwodis-listing.jpg"
+    },
+    {
+      "file": "assets/images/mhi2q-carplay-altscreen/inline-2.jpg",
+      "width": 1253,
+      "height": 691,
+      "alt": "第三方网站页面上的标价：200 美元或 2000 积分",
+      "caption": "标价 200 美元，还要登录或积分才能下载。",
+      "prompt": "source: docs/vwodis-price.jpg"
+    }
+  ]
+}

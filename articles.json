@@ -1,0 +1,22 @@
+[
+  {
+    "slug": "mhi2q-carplay-altscreen",
+    "title": "奥迪仪表盘，终于能显示 CarPlay 导航了",
+    "summary": "原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。",
+    "date": "2026-10-27T07:45:00.000Z",
+    "author": "慢慢写",
+    "tags": [
+      "汽车",
+      "CarPlay",
+      "开源",
+      "奥迪"
+    ],
+    "cover": "assets/images/mhi2q-carplay-altscreen/cover.jpg",
+    "coverAlt": "CarPlay 导航显示在奥迪虚拟座舱仪表盘上",
+    "path": "articles/mhi2q-carplay-altscreen.html",
+    "wordCount": 1116,
+    "readTime": 3,
+    "imageCount": 3,
+    "updatedAt": "2026-10-27T08:21:20.445Z"
+  }
+]
