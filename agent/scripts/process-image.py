@@ -3,7 +3,7 @@
 compressed JPEG suitable for the preview page and article images.
 
 Usage:
-    python3 scripts/process-image.py input output width height [crop_bottom]
+    python3 agent/scripts/process-image.py input output width height [crop_bottom]
 """
 import sys
 

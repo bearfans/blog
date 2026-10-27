@@ -4,8 +4,8 @@
  * all line up. Exits non-zero on a real problem.
  *
  * Usage:
- *   node scripts/verify-article.mjs content/<slug>
- *   node scripts/verify-article.mjs <slug>
+ *   node agent/scripts/verify-article.mjs content/<slug>
+ *   node agent/scripts/verify-article.mjs <slug>
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -13,7 +13,7 @@ import { ROOT, escapeHtml, existsSync, parseDate, rootRelative } from "./lib/uti
 
 const arg = process.argv[2];
 if (!arg) {
-  console.error("用法：node scripts/verify-article.mjs content/<slug>");
+  console.error("用法：node agent/scripts/verify-article.mjs content/<slug>");
   process.exit(1);
 }
 

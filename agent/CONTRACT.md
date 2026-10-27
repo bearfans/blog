@@ -2,7 +2,7 @@
 
 本文件是 `article-writer` Agent 与当前站点模板之间的唯一接口。
 
-Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、目录结构或页面结构后，必须同步更新这里；不要把模板细节写回 Agent 提示词。
+Agent 每次开始任务前读取本文件。修改页面模板、页面构建脚本、Agent 脚本、目录结构或页面结构后，必须同步更新这里；不要把模板细节写回 Agent 提示词。
 
 ## 1. 模板标识
 
@@ -16,6 +16,9 @@ Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、
 
 | 用途 | 路径 |
 | --- | --- |
+| Agent 完整提示词 | `agent/AGENT.md` |
+| Agent 契约 | `agent/CONTRACT.md` |
+| Agent 复用说明 | `agent/README.md` |
 | 站点配置 | `site.json` |
 | 文章清单 | `articles.json` |
 | 首页 | `index.html` |
@@ -27,9 +30,10 @@ Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、
 | 图片资源 | `assets/images/<slug>/` |
 | 文章模板 | `templates/article.html` |
 | 首页模板 | `templates/index.html` |
-| 构建脚本 | `scripts/build-article.mjs` |
-| 图片脚本 | `scripts/generate-images.mjs` |
-| 验收脚本 | `scripts/verify-article.mjs` |
+| 页面构建脚本 | `scripts/build-article.mjs` |
+| 图片生成脚本 | `agent/scripts/generate-images.mjs` |
+| 图片处理脚本 | `agent/scripts/process-image.py` |
+| 验收脚本 | `agent/scripts/verify-article.mjs` |
 
 ## 3. 占位符与命令
 
@@ -44,9 +48,9 @@ Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、
 
 | 用途 | 命令 | 说明 |
 | --- | --- | --- |
-| 生成图片 | `node scripts/generate-images.mjs {meta}` | 加 `--force` 强制重画；已有图片默认复用 |
+| 生成图片 | `node agent/scripts/generate-images.mjs {meta}` | 加 `--force` 强制重画；已有图片默认复用 |
 | 构建页面 | `node scripts/build-article.mjs {contentDir}` | 生成文章页、更新 `articles.json` 和 `index.html` |
-| 验收 | `node scripts/verify-article.mjs {contentDir}` | 必须显示「验收通过」 |
+| 验收 | `node agent/scripts/verify-article.mjs {contentDir}` | 必须显示「验收通过」 |
 | 重建全部文章 | `node scripts/build-article.mjs --all` | 可选 |
 | 只重建首页 | `node scripts/build-article.mjs --index` | 可选；自定义首页会先备份 |
 | 不动首页 | `node scripts/build-article.mjs {contentDir} --no-index` | 可选 |
@@ -95,7 +99,7 @@ Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、
 
 ## 5. `images.json`
 
-由 `scripts/generate-images.mjs` 生成，不要手写。结构：
+由 `agent/scripts/generate-images.mjs` 生成，不要手写。结构：
 
 ```json
 {
@@ -177,7 +181,7 @@ Agent 每次开始任务前读取本文件。修改 `templates/`、`scripts/`、
 先运行：
 
 ```bash
-node scripts/verify-article.mjs {contentDir}
+node agent/scripts/verify-article.mjs {contentDir}
 ```
 
 通过后人工确认：
@@ -204,7 +208,7 @@ node scripts/verify-article.mjs {contentDir}
 
 ## 9. 复用 Agent
 
-- Agent 提示词在 `.opencode/agents/article-writer.md`，不包含本文件的任何路径或模板细节。
-- 在另一个项目复用 Agent 时，复制这个 Agent 文件，并在目标项目提供自己的 `templates/CONTRACT.md`；具体步骤见 `agent/README.md`。
-- 换模板、换目录、换命令时只改本契约和模板实现，不改 Agent 提示词。
+- Agent 完整提示词在 `agent/AGENT.md`，OpenCode 入口是 `.opencode/agents/article-writer.md`，入口只负责加载提示词和本契约。
+- 在另一个项目复用 Agent 时，复制 `agent/` 目录和 `.opencode/agents/article-writer.md`，再按目标项目修改 `agent/CONTRACT.md`；具体步骤见 `agent/README.md`。
+- 换模板、换目录、换命令时只改本契约和根目录的页面构建实现，不改 Agent 提示词。
 - 本文件是项目模板层的一部分，不属于 Agent。

@@ -3,8 +3,8 @@
  * Generate a cover and up to four inline images for an article.
  *
  * Usage:
- *   node scripts/generate-images.mjs content/<slug>/meta.json
- *   node scripts/generate-images.mjs content/<slug>/meta.json --force
+ *   node agent/scripts/generate-images.mjs content/<slug>/meta.json
+ *   node agent/scripts/generate-images.mjs content/<slug>/meta.json --force
  *
  * Default provider: Pollinations (no key required, but free requests are
  * rate-limited to roughly one image every 45 seconds per IP).
@@ -25,7 +25,7 @@ const only = (() => {
 })();
 
 if (!metaArg) {
-  console.error("用法：node scripts/generate-images.mjs content/<slug>/meta.json [--force] [--only cover|1|2|3|4]");
+  console.error("用法：node agent/scripts/generate-images.mjs content/<slug>/meta.json [--force] [--only cover|1|2|3|4]");
   process.exit(1);
 }
 
@@ -197,7 +197,7 @@ async function fetchImage(prompt, width, height, seed, label) {
 }
 
 function postProcess(rawPath, finalPath, width, height) {
-  const script = path.join(ROOT, "scripts", "process-image.py");
+  const script = path.join(ROOT, "agent", "scripts", "process-image.py");
   const result = spawnSync(
     "python3",
     [script, rawPath, finalPath, String(width), String(height), String(CROP_BOTTOM)],

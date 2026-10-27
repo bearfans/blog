@@ -52,15 +52,15 @@ robots.txt / sitemap.xml  SEO 文件（由构建脚本自动更新）
 
 ## Agent 与模板分离
 
-- `.opencode/agents/article-writer.md`：通用 Agent，只负责写作、视觉方向、流程和验收，不包含当前站点的路径、命令或选择器。
-- `templates/CONTRACT.md`：当前模板的契约，定义目录、`meta.json` 字段、图片规格、构建/验收命令和页面结构。
-- `agent/README.md`：如何把 Agent 复制到其他项目复用。
+- `agent/`：Agent 的完整资源，包括 `AGENT.md`（完整提示词）、`CONTRACT.md`（与页面构建的接口）、`README.md` 和 `scripts/`（图片生成、图片处理和验收脚本）。
+- `.opencode/agents/article-writer.md`：OpenCode 入口，只负责加载 `agent/AGENT.md` 和 `agent/CONTRACT.md`。
+- `scripts/`、`templates/`、`site.json`：项目页面构建部分，放在根目录。
 
-换模板、换目录或换构建脚本时，只改 `templates/`、`scripts/` 和 `templates/CONTRACT.md`；不要把模板细节写回 Agent。
+换模板、换目录或换页面构建脚本时，只改根目录的 `templates/`、`scripts/` 和 `agent/CONTRACT.md`；不要把页面细节写回 `agent/AGENT.md`。
 
 ## GitHub Pages 部署
 
-仓库自带 `.github/workflows/pages.yml`。每次推送 `main`，工作流会只把首页、文章页、图片等静态文件发布到 GitHub Pages，不会把 `scripts/`、`content/`、`templates/` 一起暴露出去。
+仓库自带 `.github/workflows/pages.yml`。每次推送 `main`，工作流会只把首页、文章页、图片等静态文件发布到 GitHub Pages，不会把 `agent/`、`scripts/`、`content/`、`templates/` 一起暴露出去。
 
 1. 首次启用：在 GitHub 仓库的 **Settings → Pages** 中，把 **Build and deployment → Source** 设为 `GitHub Actions`。工作流也会尝试自动启用 Pages；如果仓库策略不允许，需要手动切换。
 2. 自定义域名由根目录的 `CNAME` 指定（当前为 `blog.tangfan.net.cn`）。DNS 需要有一条 `blog` 的 CNAME 记录指向 `bearfans.github.io`，生效后在 Pages 设置里开启 **Enforce HTTPS**。
@@ -113,14 +113,14 @@ export POLLINATIONS_API_KEY="sk_..."
 
 ```bash
 # 只生成图片（已有图片会复用；加 --force 重画）
-node scripts/generate-images.mjs content/<slug>/meta.json
-node scripts/generate-images.mjs content/<slug>/meta.json --force
+node agent/scripts/generate-images.mjs content/<slug>/meta.json
+node agent/scripts/generate-images.mjs content/<slug>/meta.json --force
 
 # 只构建一篇文章
 node scripts/build-article.mjs content/<slug>
 
 # 验收：页面结构、图片、清单排序、首页卡片
-node scripts/verify-article.mjs content/<slug>
+node agent/scripts/verify-article.mjs content/<slug>
 
 # 重建所有文章和首页
 node scripts/build-article.mjs --all
@@ -146,23 +146,23 @@ node scripts/build-article.mjs content/<slug> --force-index
 - **站点名、副标题、作者、页脚**：改 `site.json`。
 - **页面样式**：改 `templates/article.html`、`templates/index.html`。
 - **默认模型**：改 `.opencode/agents/article-writer.md` 里的 `model`。
-- **图片风格**：在每篇文章的 `meta.json` 里改 `imageStyle`，或在 `templates/CONTRACT.md` 的图片契约里调整默认要求。
+- **图片风格**：在每篇文章的 `meta.json` 里改 `imageStyle`，或在 `agent/CONTRACT.md` 的图片契约里调整默认要求。
 - **文章源文件**：`content/<slug>/article.md`、`meta.json` 和 `images.json`。
 
 ## 目录结构
 
 ```text
-.opencode/agents/article-writer.md  通用 Agent（写作规则、流程、验收）
-agent/README.md                     Agent 复用说明
-templates/CONTRACT.md               Agent 与当前模板之间的契约
+.opencode/agents/article-writer.md  OpenCode 入口，加载 Agent 资源
+agent/
+├── AGENT.md                        完整 Agent 提示词（写作、流程、验收）
+├── CONTRACT.md                     Agent 与页面构建之间的接口
+├── README.md                       Agent 复用说明
+└── scripts/                         图片生成、图片处理、验收脚本
+scripts/
+├── build-article.mjs               页面生成、清单维护、首页更新
+└── lib/                            Markdown 渲染与页面构建工具
+templates/                          文章页与首页模板
 .github/workflows/pages.yml         GitHub Pages 自动部署
-scripts/generate-images.mjs         图片生成与重试
-scripts/process-image.py            裁角标、统一比例、压缩
-scripts/build-article.mjs           页面生成、清单维护、首页更新
-scripts/verify-article.mjs          发布前验收
-scripts/lib/markdown.mjs            轻量 Markdown → 内联 HTML
-scripts/lib/utils.mjs               日期、字数、转义等工具
-templates/                          文章页、首页模板与模板契约
 ```
 
 ## 常见问题
@@ -181,4 +181,4 @@ templates/                          文章页、首页模板与模板契约
 
 **没有 API key 能跑吗？**
 
-可以。图片走 Pollinations 免费额度，只是每张之间要等一会儿。文字生成使用 agent 里配置的模型（默认 `deepseek/deepseek-v4-pro#high`，可在 `.opencode/agents/article-writer.md` 里改）。
+可以。图片走 Pollinations 免费额度，只是每张之间要等一会儿。文字生成使用 Agent 里配置的模型（默认 `deepseek/deepseek-v4-pro#high`，可在 `.opencode/agents/article-writer.md` 里改）。
