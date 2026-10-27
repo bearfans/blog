@@ -138,7 +138,7 @@ async function fetchImage(prompt, width, height, seed, label) {
 
     try {
       const headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; wechat-writer/1.0; +local)",
+        "User-Agent": "Mozilla/5.0 (compatible; article-writer/1.0; +local)",
         Accept: "image/jpeg,image/png,image/webp,image/*;q=0.8",
       };
       if (API_KEY) headers.Authorization = `Bearer ${API_KEY}`;

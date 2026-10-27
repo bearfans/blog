@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Crop the Pollinations corner mark, normalize the aspect ratio, and save a
-compressed JPEG suitable for both the preview page and WeChat.
+compressed JPEG suitable for the preview page and article images.
 
 Usage:
     python3 scripts/process-image.py input output width height [crop_bottom]

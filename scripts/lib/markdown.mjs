@@ -48,7 +48,7 @@ function inline(text) {
     return protect(`<code style="${CODE_STYLE}">${escapeHtml(code)}</code>`);
   });
 
-  // Links. WeChat strips most external links, but keeping the text is still useful.
+  // Links. Some editors strip external links, but keeping the text is still useful.
   s = s.replace(/\[([^\]\n]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_, label, url) => {
     const href = safeUrl(url);
     if (!href) return label;
@@ -91,7 +91,7 @@ function stripHtmlComments(md) {
 /**
  * Render a deliberately small Markdown subset.
  * Images are handled through standalone {{image:n}} markers so the build step
- * can inline them as base64 (required for a clean WeChat paste).
+ * can inline them as base64 (required for a clean rich-text paste).
  */
 export function renderMarkdown(markdown, options = {}) {
   const { renderImage = null } = options;

@@ -14,16 +14,16 @@
 
 ```bash
 # 一次性生成
-opencode run --agent wechat-writer "写一篇关于『为什么我们越来越难读完一篇文章』的文章"
+opencode run --agent article-writer "写一篇关于『为什么我们越来越难读完一篇文章』的文章"
 
-# 或者进入 TUI，把 agent 切换到 wechat-writer，再直接输入主题
+# 或者进入 TUI，把 agent 切换到 article-writer，再直接输入主题
 opencode
 ```
 
 也可以给提纲：
 
 ```bash
-opencode run --agent wechat-writer "
+opencode run --agent article-writer "
 主题：把早晨还给自己
 提纲：
 1. 被手机切碎的早晨
@@ -49,6 +49,14 @@ robots.txt / sitemap.xml  SEO 文件（由构建脚本自动更新）
 ```
 
 首次运行会自动创建 `index.html`。之后再发文，构建脚本会把新卡片按日期排到最上面。
+
+## Agent 与模板分离
+
+- `.opencode/agents/article-writer.md`：通用 Agent，只负责写作、视觉方向、流程和验收，不包含当前站点的路径、命令或选择器。
+- `templates/CONTRACT.md`：当前模板的契约，定义目录、`meta.json` 字段、图片规格、构建/验收命令和页面结构。
+- `agent/README.md`：如何把 Agent 复制到其他项目复用。
+
+换模板、换目录或换构建脚本时，只改 `templates/`、`scripts/` 和 `templates/CONTRACT.md`；不要把模板细节写回 Agent。
 
 ## GitHub Pages 部署
 
@@ -137,14 +145,16 @@ node scripts/build-article.mjs content/<slug> --force-index
 
 - **站点名、副标题、作者、页脚**：改 `site.json`。
 - **页面样式**：改 `templates/article.html`、`templates/index.html`。
-- **默认模型**：改 `.opencode/agents/wechat-writer.md` 里的 `model`。
-- **图片风格**：在每篇文章的 `meta.json` 里改 `imageStyle`，或在 agent 提示词里改默认风格。
+- **默认模型**：改 `.opencode/agents/article-writer.md` 里的 `model`。
+- **图片风格**：在每篇文章的 `meta.json` 里改 `imageStyle`，或在 `templates/CONTRACT.md` 的图片契约里调整默认要求。
 - **文章源文件**：`content/<slug>/article.md`、`meta.json` 和 `images.json`。
 
 ## 目录结构
 
 ```text
-.opencode/agents/wechat-writer.md   Agent 定义（写作规则、流程、验收）
+.opencode/agents/article-writer.md  通用 Agent（写作规则、流程、验收）
+agent/README.md                     Agent 复用说明
+templates/CONTRACT.md               Agent 与当前模板之间的契约
 .github/workflows/pages.yml         GitHub Pages 自动部署
 scripts/generate-images.mjs         图片生成与重试
 scripts/process-image.py            裁角标、统一比例、压缩
@@ -152,7 +162,7 @@ scripts/build-article.mjs           页面生成、清单维护、首页更新
 scripts/verify-article.mjs          发布前验收
 scripts/lib/markdown.mjs            轻量 Markdown → 内联 HTML
 scripts/lib/utils.mjs               日期、字数、转义等工具
-templates/                          文章页与首页模板
+templates/                          文章页、首页模板与模板契约
 ```
 
 ## 常见问题
@@ -171,4 +181,4 @@ templates/                          文章页与首页模板
 
 **没有 API key 能跑吗？**
 
-可以。图片走 Pollinations 免费额度，只是每张之间要等一会儿。文字生成使用 agent 里配置的模型（默认 `deepseek/deepseek-v4-pro#high`，可在 `.opencode/agents/wechat-writer.md` 里改）。
+可以。图片走 Pollinations 免费额度，只是每张之间要等一会儿。文字生成使用 agent 里配置的模型（默认 `deepseek/deepseek-v4-pro#high`，可在 `.opencode/agents/article-writer.md` 里改）。
