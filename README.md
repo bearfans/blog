@@ -52,9 +52,9 @@ robots.txt / sitemap.xml  SEO 文件（由构建脚本自动更新）
 
 ## GitHub Pages 部署
 
-仓库本身就是可发布的静态站点，不需要额外的构建步骤：
+仓库自带 `.github/workflows/pages.yml`。每次推送 `main`，工作流会只把首页、文章页、图片等静态文件发布到 GitHub Pages，不会把 `scripts/`、`content/`、`templates/` 一起暴露出去。
 
-1. 在 GitHub 仓库的 **Settings → Pages** 中，把 **Build and deployment → Source** 设为 `Deploy from a branch`，分支选择 `main`，目录选择 `/ (root)`。
+1. 首次启用：在 GitHub 仓库的 **Settings → Pages** 中，把 **Build and deployment → Source** 设为 `GitHub Actions`。工作流也会尝试自动启用 Pages；如果仓库策略不允许，需要手动切换。
 2. 自定义域名由根目录的 `CNAME` 指定（当前为 `blog.tangfan.net.cn`）。DNS 需要有一条 `blog` 的 CNAME 记录指向 `bearfans.github.io`，生效后在 Pages 设置里开启 **Enforce HTTPS**。
 3. 每次生成或修改文章后，提交并推送即可自动发布：
 
@@ -145,6 +145,7 @@ node scripts/build-article.mjs content/<slug> --force-index
 
 ```text
 .opencode/agents/wechat-writer.md   Agent 定义（写作规则、流程、验收）
+.github/workflows/pages.yml         GitHub Pages 自动部署
 scripts/generate-images.mjs         图片生成与重试
 scripts/process-image.py            裁角标、统一比例、压缩
 scripts/build-article.mjs           页面生成、清单维护、首页更新
