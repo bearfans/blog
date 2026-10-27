@@ -42,9 +42,32 @@ assets/images/<slug>/     封面与正文图
 content/<slug>/           文章源文件（article.md / meta.json / images.json）
 articles.json             文章清单
 index.html                首页
+CNAME                     GitHub Pages 自定义域名（由 site.json 自动生成）
+.nojekyll                 关闭 GitHub Pages 的 Jekyll 构建
+404.html                  自定义 404 页面
+robots.txt / sitemap.xml  SEO 文件（由构建脚本自动更新）
 ```
 
 首次运行会自动创建 `index.html`。之后再发文，构建脚本会把新卡片按日期排到最上面。
+
+## GitHub Pages 部署
+
+仓库本身就是可发布的静态站点，不需要额外的构建步骤：
+
+1. 在 GitHub 仓库的 **Settings → Pages** 中，把 **Build and deployment → Source** 设为 `Deploy from a branch`，分支选择 `main`，目录选择 `/ (root)`。
+2. 自定义域名由根目录的 `CNAME` 指定（当前为 `blog.tangfan.net.cn`）。DNS 需要有一条 `blog` 的 CNAME 记录指向 `bearfans.github.io`，生效后在 Pages 设置里开启 **Enforce HTTPS**。
+3. 每次生成或修改文章后，提交并推送即可自动发布：
+
+   ```bash
+   node scripts/build-article.mjs --all
+   git add -A
+   git commit -m "Update articles"
+   git push
+   ```
+
+`site.json` 里的 `url` 是站点的正式地址，构建时会用它生成 canonical、Open Graph、Twitter Card、JSON-LD、`sitemap.xml`、`robots.txt` 和 `CNAME`。换域名时只改这一处，然后重新构建即可。
+
+页面全部使用相对路径、内联样式和本地资源，不依赖 Node 服务或第三方 CDN，符合 GitHub Pages 的静态托管要求。`404.html` 会在访问不存在的路径时自动展示。
 
 ## 复制到公众号
 

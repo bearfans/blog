@@ -65,6 +65,82 @@ function readSite() {
   return { ...SITE_DEFAULTS, ...site };
 }
 
+function siteBase(site) {
+  return String(site.url || "").trim().replace(/\/+$/, "");
+}
+
+function siteUrl(site, pathname = "") {
+  const base = siteBase(site);
+  const rel = String(pathname).replace(/^\/+/, "");
+  if (base) return rel ? `${base}/${rel}` : `${base}/`;
+  return rel ? `/${rel}` : "/";
+}
+
+function escapeXml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
+function inlineJson(value) {
+  return JSON.stringify(value).replaceAll("<", "\\u003c");
+}
+
+function socialImageTags(site, image, alt = "") {
+  if (!image) return "";
+  const url = escapeAttr(siteUrl(site, image));
+  const altTag = alt ? `\n<meta property="og:image:alt" content="${escapeAttr(alt)}">` : "";
+  return `<meta property="og:image" content="${url}">${altTag}
+<meta name="twitter:image" content="${url}">`;
+}
+
+function renderSitemap(manifest, site) {
+  const base = siteBase(site);
+  if (!base) return "";
+  const sorted = sortManifest(manifest);
+  const newest = sorted.reduce((max, entry) => {
+    return Math.max(max, parseDate(entry.updatedAt || entry.date).getTime());
+  }, 0);
+  const urls = [
+    `  <url>\n    <loc>${escapeXml(`${base}/`)}</loc>\n    <lastmod>${new Date(newest || Date.now()).toISOString()}</lastmod>\n  </url>`,
+    ...sorted.map(
+      (entry) =>
+        `  <url>\n    <loc>${escapeXml(`${base}/${entry.path}`)}</loc>\n    <lastmod>${parseDate(entry.updatedAt || entry.date).toISOString()}</lastmod>\n  </url>`,
+    ),
+  ];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join("\n")}
+</urlset>
+`;
+}
+
+async function writePublishingFiles(manifest, site) {
+  const base = siteBase(site);
+  const robots = `User-agent: *
+Allow: /
+${base ? `\nSitemap: ${base}/sitemap.xml\n` : ""}`;
+  await fsp.writeFile(path.join(ROOT, "robots.txt"), robots, "utf8");
+
+  if (!base) {
+    console.log("· site.json 未配置 url，已跳过 sitemap.xml 与 CNAME 生成");
+    return;
+  }
+
+  let host;
+  try {
+    host = new URL(base).host;
+  } catch {
+    throw new Error(`site.json 的 url 不是合法地址：${base}`);
+  }
+
+  await fsp.writeFile(path.join(ROOT, "sitemap.xml"), renderSitemap(manifest, site), "utf8");
+  await fsp.writeFile(path.join(ROOT, "CNAME"), `${host}\n`, "utf8");
+}
+
 function readManifest() {
   if (!existsSync(manifestPath)) return [];
   const text = fs.readFileSync(manifestPath, "utf8");
@@ -177,10 +253,11 @@ function renderTagsInline(tags) {
 function renderCard(entry, index) {
   const latest = index === 0 ? '<span class="latest">最新</span>' : "";
   const tags = renderTags(entry.tags);
+  const priority = index === 0 ? ' fetchpriority="high"' : "";
   return `<article class="card" data-wechat-article="${escapeAttr(entry.slug)}">
   <a href="${escapeAttr(entry.path)}">
     <div class="card-cover">
-      <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="${index < 3 ? "eager" : "lazy"}">
+      <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="${index < 3 ? "eager" : "lazy"}"${priority} decoding="async">
     </div>
     <div class="card-body">
       <div class="card-meta">
@@ -203,7 +280,7 @@ function renderStandaloneCard(entry) {
   return `<article data-wechat-article="${escapeAttr(entry.slug)}" style="break-inside:avoid;margin:0 0 24px;background:#fff;border:1px solid rgba(31,35,40,.08);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(31,35,40,.05);">
   <a href="${escapeAttr(entry.path)}" style="display:block;color:inherit;text-decoration:none;">
     <div style="aspect-ratio:16/9;background:#e7e9e8;overflow:hidden;">
-      <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;">
     </div>
     <div style="padding:20px 21px 22px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:#8a9097;font-size:11.5px;line-height:1.5;">
@@ -229,15 +306,36 @@ function renderIndex(manifest, site) {
   <h2>还没有文章</h2>
   <p>把主题或概要发给 <code>wechat-writer</code>，第一篇文章就会出现在这里。</p>
 </section>`;
+  const latest = sorted[0];
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: site.title,
+    description: site.description,
+    url: siteUrl(site),
+    inLanguage: "zh-CN",
+    blogPost: sorted.map((entry) => ({
+      "@type": "BlogPosting",
+      headline: entry.title,
+      description: entry.summary || "",
+      url: siteUrl(site, entry.path),
+      datePublished: parseDate(entry.date).toISOString(),
+      ...(entry.cover ? { image: siteUrl(site, entry.cover) } : {}),
+    })),
+  };
   return fillTemplate(template, {
     SITE_TITLE: escapeHtml(site.title),
     SITE_EYEBROW: escapeHtml(site.eyebrow),
     SITE_SUBTITLE: escapeHtml(site.subtitle),
     SITE_DESCRIPTION: escapeHtml(site.description),
     SITE_FOOTER: escapeHtml(site.footer),
+    SITE_AUTHOR: escapeHtml(site.author),
+    SITE_URL: siteBase(site),
     ARTICLE_COUNT: String(sorted.length),
     LATEST_DATE: sorted.length ? formatDateShort(sorted[0].date) : "暂无",
     CARDS: cards,
+    SOCIAL_IMAGE_TAGS: socialImageTags(site, latest?.cover, latest?.coverAlt || latest?.title),
+    JSON_LD: inlineJson(jsonLd),
   });
 }
 
@@ -395,28 +493,56 @@ async function buildOne(contentDir) {
   const tags = Array.isArray(meta.tags) ? meta.tags.filter(Boolean).slice(0, 5) : [];
   const title = String(meta.title).trim();
   const summary = String(meta.summary || excerpt(markdown)).trim();
-  const author = String(meta.author || readSite().author || "佚名").trim();
+  const site = readSite();
+  const author = String(meta.author || site.author || "佚名").trim();
   const words = countWords(markdown);
   const readTime = readingMinutes(words);
   const cover = toPosix(path.join("..", images.cover.file));
+  const coverAlt = images.cover.alt || title;
+  const kicker = String(meta.kicker || tags[0] || "随笔").trim();
+  const publishedIso = parseDate(date).toISOString();
+  const modifiedIso = new Date().toISOString();
+  const canonical = siteUrl(site, `articles/${meta.slug}.html`);
   const template = await fsp.readFile(path.join(templatesDir, "article.html"), "utf8");
-  const site = readSite();
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description: summary,
+    datePublished: publishedIso,
+    dateModified: modifiedIso,
+    author: { "@type": "Person", name: author },
+    image: [siteUrl(site, images.cover.file)],
+    url: canonical,
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+    inLanguage: "zh-CN",
+    wordCount: words,
+    articleSection: kicker,
+    ...(tags.length ? { keywords: tags.join(", ") } : {}),
+  };
 
   const html = fillTemplate(template, {
     TITLE: escapeHtml(title),
     SUMMARY: escapeHtml(summary),
     AUTHOR: escapeHtml(author),
+    CANONICAL: escapeAttr(canonical),
     DATE: escapeHtml(formatDateLong(date)),
-    DATE_ISO: escapeAttr(parseDate(date).toISOString()),
+    DATE_ISO: escapeAttr(publishedIso),
+    DATE_MODIFIED_ISO: escapeAttr(modifiedIso),
     WORD_COUNT: String(words),
     READ_TIME: String(readTime),
-    KICKER: escapeHtml(meta.kicker || tags[0] || "随笔"),
+    KICKER: escapeHtml(kicker),
     TAGS: renderTags(tags),
+    ARTICLE_TAG_META: tags
+      .map((tag) => `<meta property="article:tag" content="${escapeAttr(tag)}">`)
+      .join("\n"),
     COVER: escapeAttr(cover),
-    COVER_ALT: escapeAttr(images.cover.alt || title),
+    COVER_ALT: escapeAttr(coverAlt),
     CONTENT: contentHtml,
     SITE_TITLE: escapeHtml(site.title),
     SITE_FOOTER: escapeHtml(site.footer),
+    SOCIAL_IMAGE_TAGS: socialImageTags(site, images.cover.file, coverAlt),
+    JSON_LD: inlineJson(jsonLd),
   });
 
   const outPath = path.join(ROOT, "articles", `${meta.slug}.html`);
@@ -427,16 +553,16 @@ async function buildOne(contentDir) {
     slug: meta.slug,
     title,
     summary,
-    date: parseDate(date).toISOString(),
+    date: publishedIso,
     author,
     tags,
     cover: images.cover.file,
-    coverAlt: images.cover.alt || title,
+    coverAlt,
     path: `articles/${meta.slug}.html`,
     wordCount: words,
     readTime,
     imageCount: 1 + (images.inline || []).length,
-    updatedAt: new Date().toISOString(),
+    updatedAt: modifiedIso,
   };
 
   return { entry, warnings, outPath, words, readTime };
@@ -476,6 +602,7 @@ async function buildAll() {
 
   await writeManifest(manifest);
   await updateIndex(sortManifest(manifest), site);
+  await writePublishingFiles(manifest, site);
   console.log(`\n完成：${built.length} 篇文章。`);
 }
 
@@ -489,6 +616,7 @@ async function main() {
       console.log(`· 已备份自定义首页：${rootRelative(backup)}`);
     }
     await writeGeneratedIndex(manifest, site);
+    await writePublishingFiles(manifest, site);
     console.log(`✓ 已重建 index.html（${manifest.length} 篇文章）`);
     return;
   }
@@ -510,6 +638,7 @@ async function main() {
   const sorted = sortManifest(manifest);
   await writeManifest(sorted);
   await updateIndex(sorted, site, result.entry);
+  await writePublishingFiles(sorted, site);
 
   console.log(`\n✓ 文章页面：${rootRelative(result.outPath)}`);
   console.log(`✓ 目录清单：articles.json（${sorted.length} 篇，最新在前）`);

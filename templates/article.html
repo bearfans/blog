@@ -6,6 +6,25 @@
 <meta name="generator" content="wechat-writer">
 <title>{{TITLE}} · {{SITE_TITLE}}</title>
 <meta name="description" content="{{SUMMARY}}">
+<meta name="author" content="{{AUTHOR}}">
+<meta name="theme-color" content="#eef0f1">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="{{SITE_TITLE}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{SUMMARY}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="{{DATE_ISO}}">
+<meta property="article:modified_time" content="{{DATE_MODIFIED_ISO}}">
+<meta property="article:author" content="{{AUTHOR}}">
+{{ARTICLE_TAG_META}}
+{{SOCIAL_IMAGE_TAGS}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{TITLE}}">
+<meta name="twitter:description" content="{{SUMMARY}}">
+<script type="application/ld+json">{{JSON_LD}}</script>
 <style>
   :root {
     --bg: #eef0f1;
@@ -267,7 +286,7 @@
 <main class="page">
   <article class="paper">
     <div class="cover">
-      <img src="{{COVER}}" alt="{{COVER_ALT}}">
+      <img src="{{COVER}}" alt="{{COVER_ALT}}" fetchpriority="high" decoding="async">
     </div>
 
     <header class="article-head">

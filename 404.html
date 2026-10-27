@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f6f4ef">
+<title>页面走丢了 · 慢慢写</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --ink: #1f2328;
+    --muted: #737981;
+    --green: #07c160;
+    --green-dark: #06ad56;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background:
+      radial-gradient(circle at 8% 0%, rgba(7, 193, 96, 0.09), transparent 28%),
+      radial-gradient(circle at 92% 6%, rgba(255, 187, 74, 0.12), transparent 26%),
+      var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .card {
+    width: 100%;
+    max-width: 560px;
+    padding: 52px 40px;
+    border: 1px solid rgba(31, 35, 40, 0.08);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 24px 70px rgba(31, 35, 40, 0.08);
+    text-align: center;
+  }
+  .code {
+    margin: 0;
+    color: var(--green);
+    font-size: 72px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+  }
+  h1 {
+    margin: 22px 0 12px;
+    font-size: 26px;
+    line-height: 1.4;
+  }
+  p {
+    margin: 0 0 30px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 148px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    background: var(--green);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .home:hover { background: var(--green-dark); transform: translateY(-1px); }
+  @media (max-width: 480px) {
+    .card { padding: 42px 24px; }
+    .code { font-size: 60px; }
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <p class="code">404</p>
+  <h1>这页文字，暂时还没有写。</h1>
+  <p>你访问的页面不存在，也可能是链接换了位置。<br>回首页看看别的文章吧。</p>
+  <a class="home" href="/">回到首页</a>
+</main>
+</body>
+</html>
