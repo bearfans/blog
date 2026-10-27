@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="wechat-writer">
+<meta name="generator" content="slow-writer">
 <title>奥迪仪表盘，终于能显示 CarPlay 导航了 · 慢慢写</title>
 <meta name="description" content="原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。">
 <meta name="author" content="慢慢写">
@@ -17,7 +17,7 @@
 <meta property="og:url" content="https://blog.tangfan.net.cn/articles/mhi2q-carplay-altscreen.html">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-10-27T07:45:00.000Z">
-<meta property="article:modified_time" content="2026-10-27T13:52:42.122Z">
+<meta property="article:modified_time" content="2026-10-27T14:12:29.017Z">
 <meta property="article:author" content="慢慢写">
 <meta property="article:tag" content="汽车">
 <meta property="article:tag" content="CarPlay">
@@ -29,7 +29,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="奥迪仪表盘，终于能显示 CarPlay 导航了">
 <meta name="twitter:description" content="原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"奥迪仪表盘，终于能显示 CarPlay 导航了","description":"原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。","datePublished":"2026-10-27T07:45:00.000Z","dateModified":"2026-10-27T13:52:42.122Z","author":{"@type":"Person","name":"慢慢写"},"image":["https://blog.tangfan.net.cn/assets/images/mhi2q-carplay-altscreen/cover.jpg"],"url":"https://blog.tangfan.net.cn/articles/mhi2q-carplay-altscreen.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.tangfan.net.cn/articles/mhi2q-carplay-altscreen.html"},"inLanguage":"zh-CN","wordCount":1116,"articleSection":"汽车折腾","keywords":"汽车, CarPlay, 开源, 奥迪"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"奥迪仪表盘，终于能显示 CarPlay 导航了","description":"原厂 CarPlay 导航只能挤在中控屏，仪表盘还在用原车地图。这个开源项目把 iPhone 的导航投进了 Virtual Cockpit，转向箭头、车道引导、电话页都跟着来了——而且免费。","datePublished":"2026-10-27T07:45:00.000Z","dateModified":"2026-10-27T14:12:29.017Z","author":{"@type":"Person","name":"慢慢写"},"image":["https://blog.tangfan.net.cn/assets/images/mhi2q-carplay-altscreen/cover.jpg"],"url":"https://blog.tangfan.net.cn/articles/mhi2q-carplay-altscreen.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.tangfan.net.cn/articles/mhi2q-carplay-altscreen.html"},"inLanguage":"zh-CN","wordCount":1116,"articleSection":"汽车折腾","keywords":"汽车, CarPlay, 开源, 奥迪"}</script>
 <style>
   :root {
     --bg: #eef0f1;
@@ -92,7 +92,7 @@
   .page {
     max-width: 760px;
     margin: 0 auto;
-    padding: 10px 18px 120px;
+    padding: 10px 18px 64px;
   }
   .paper {
     overflow: hidden;
@@ -169,12 +169,18 @@
   .article-foot {
     padding: 0 40px 38px;
   }
+  .foot-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
   .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
   }
   .tag {
     display: inline-block;
@@ -191,57 +197,34 @@
     font-size: 12px;
     line-height: 1.7;
   }
-  .hint {
-    margin: 18px 8px 0;
-    text-align: center;
-    color: #9298a0;
-    font-size: 12px;
-    line-height: 1.7;
-  }
-  .hint a {
-    color: var(--green-dark);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(7, 193, 96, 0.28);
-  }
-  .copy-bar {
-    position: fixed;
-    left: 50%;
-    bottom: max(20px, env(safe-area-inset-bottom, 0px));
-    transform: translateX(-50%);
-    z-index: 50;
-    width: max-content;
-    max-width: calc(100vw - 32px);
-  }
   .copy-btn {
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    min-width: 190px;
-    padding: 13px 24px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--green);
-    color: #fff;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f7f9f8;
+    color: #5b625d;
     font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
     cursor: pointer;
-    box-shadow: 0 12px 28px rgba(7, 193, 96, 0.32), 0 2px 6px rgba(7, 193, 96, 0.20);
-    transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
     -webkit-tap-highlight-color: transparent;
   }
   .copy-btn:hover {
-    background: var(--green-dark);
-    box-shadow: 0 14px 32px rgba(7, 193, 96, 0.38), 0 2px 6px rgba(7, 193, 96, 0.22);
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
   }
-  .copy-btn:active { transform: translateY(1px) scale(0.99); }
-  .copy-btn:disabled { cursor: wait; opacity: 0.8; }
+  .copy-btn:active { transform: translateY(1px) scale(0.98); }
+  .copy-btn:disabled { cursor: wait; opacity: 0.7; }
   .toast {
     position: fixed;
     left: 50%;
-    bottom: calc(max(20px, env(safe-area-inset-bottom, 0px)) + 64px);
+    bottom: max(28px, env(safe-area-inset-bottom, 0px));
     transform: translate(-50%, 8px);
     z-index: 60;
     max-width: calc(100vw - 40px);
@@ -262,18 +245,18 @@
   }
   @media (max-width: 640px) {
     .topbar { padding: 16px 16px 8px; }
-    .page { padding: 6px 10px 110px; }
+    .page { padding: 6px 10px 44px; }
     .paper { border-radius: 14px; }
     .article-head { padding: 26px 22px 0; }
     .rule { margin: 22px 22px 0; }
     .content { padding: 24px 22px 12px; }
     .article-foot { padding: 0 22px 30px; }
     .summary { font-size: 15px; }
-    .copy-btn { min-width: 178px; padding: 12px 22px; }
+    .copy-btn { width: 36px; height: 36px; }
   }
   @media print {
     body { background: #fff; }
-    .topbar, .copy-bar, .toast, .hint { display: none !important; }
+    .topbar, .toast, .copy-btn { display: none !important; }
     .page { max-width: none; padding: 0; }
     .paper { border: 0; box-shadow: none; border-radius: 0; }
   }
@@ -302,7 +285,7 @@
 
     <div class="rule"></div>
 
-    <div class="content" id="wechat-content">
+    <div class="content" id="article-content">
 <p style="margin:0 0 1.5em;font-size:16px;line-height:1.8;color:#333;text-align:justify;word-break:break-word;">很多奥迪车主都遇到过这个憋屈时刻：iPhone 插上 CarPlay，高德或百度在中控屏上跑得挺好，抬头一看，方向盘后面那块更贵的虚拟座舱，还停在原车地图上——两条导航，各说各话。</p>
 <p style="margin:0 0 1.5em;font-size:16px;line-height:1.8;color:#333;text-align:justify;word-break:break-word;">能不能把手机的导航，直接投进仪表盘？</p>
 <p style="margin:0 0 1.5em;font-size:16px;line-height:1.8;color:#333;text-align:justify;word-break:break-word;">能。有个开源项目做到了，叫 MHI2Q-CarPlay-AltScreen，当前版本 V3.8 Fix1，代码全部公开在 GitHub（yuedizhibo/MHI2Q-CarPlay-AltScreen）。上线一个月左右，已经有 400 多颗 star。</p>
@@ -333,30 +316,27 @@
     </div>
 
     <footer class="article-foot">
-      <div class="tags"><span class="tag">汽车</span><span class="tag">CarPlay</span><span class="tag">开源</span><span class="tag">奥迪</span></div>
+      <div class="foot-row">
+        <div class="tags"><span class="tag">汽车</span><span class="tag">CarPlay</span><span class="tag">开源</span><span class="tag">奥迪</span></div>
+        <button class="copy-btn" id="copy-btn" type="button" aria-label="复制文章内容" title="复制文章内容">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"></rect>
+            <path d="M5 15V6a2 2 0 0 1 2-2h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
       <p class="foot-note">文字是慢的，但会留下来。</p>
     </footer>
   </article>
-
-  <p class="hint">点击下方按钮复制正文，再粘贴到微信公众号编辑器。正文图片已内嵌，粘贴后由微信自动转存。<br><a href="../assets/images/mhi2q-carplay-altscreen/cover.jpg" download>下载封面图</a></p>
 </main>
 
-<div class="copy-bar">
-  <button class="copy-btn" id="copy-btn" type="button" aria-label="复制正文到微信公众号">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"></rect>
-      <path d="M5 15V6a2 2 0 0 1 2-2h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-    </svg>
-    <span>复制到公众号</span>
-  </button>
-</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
   (function () {
     var btn = document.getElementById('copy-btn');
     var toastEl = document.getElementById('toast');
-    var content = document.getElementById('wechat-content');
+    var content = document.getElementById('article-content');
     var timer = null;
 
     function toast(message) {
@@ -415,13 +395,13 @@
         } else {
           fallbackCopy(content);
         }
-        toast('已复制，去公众号编辑器粘贴即可');
+        toast('已复制文章内容');
       } catch (err) {
         try {
           fallbackCopy(content);
-          toast('已复制，去公众号编辑器粘贴即可');
+          toast('已复制文章内容');
         } catch (err2) {
-          toast('复制失败，请手动全选正文复制');
+          toast('复制失败，请手动选择正文复制');
         }
       } finally {
         btn.disabled = false;

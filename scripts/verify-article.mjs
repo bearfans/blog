@@ -89,15 +89,15 @@ if (!existsSync(pagePath)) {
 const page = fs.readFileSync(pagePath, "utf8");
 const titleEscaped = escapeHtml(String(meta.title || ""));
 
-if (!page.includes('id="wechat-content"')) fail("文章页缺少 #wechat-content");
+if (!page.includes('id="article-content"')) fail("文章页缺少 #article-content");
 if (!page.includes('id="copy-btn"')) fail("文章页缺少 #copy-btn 复制按钮");
 if (!page.includes('href="../index.html"')) fail("文章页缺少返回首页链接");
 if (!page.includes(titleEscaped)) fail("文章页里找不到 meta.json 的标题");
 if (images.cover?.file && !page.includes(`../${images.cover.file}`)) {
   fail("文章页没有引用正确的封面图");
 }
-if (!page.includes('name="generator" content="wechat-writer"')) {
-  warn("文章页没有 wechat-writer 的 generator 标记");
+if (!page.includes('name="generator" content="slow-writer"')) {
+  warn("文章页没有 slow-writer 的 generator 标记");
 }
 
 const leftover = page.match(/\{\{(?:TITLE|SUMMARY|AUTHOR|DATE|DATE_ISO|WORD_COUNT|READ_TIME|KICKER|TAGS|COVER|COVER_ALT|CONTENT|SITE_TITLE|SITE_FOOTER)\}\}/g);
@@ -153,7 +153,7 @@ if (!existsSync(manifestPath)) {
     fail("index.html 不存在");
   } else {
     const index = fs.readFileSync(indexPath, "utf8");
-    if (!index.includes(`data-wechat-article="${slug}"`)) {
+    if (!index.includes(`data-article="${slug}"`)) {
       fail("首页没有这篇文章的卡片");
     } else {
       ok.push("首页卡片存在");
@@ -164,7 +164,7 @@ if (!existsSync(manifestPath)) {
 
     const isNewest = manifest.length > 0 && manifest[0].slug === slug;
     if (isNewest) {
-      const positions = [...index.matchAll(/data-wechat-article="([^"]+)"/g)].map((m) => ({
+      const positions = [...index.matchAll(/data-article="([^"]+)"/g)].map((m) => ({
         slug: m[1],
         at: m.index,
       }));

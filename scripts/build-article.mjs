@@ -35,7 +35,7 @@ import { renderMarkdown } from "./lib/markdown.mjs";
 
 const SITE_DEFAULTS = {
   title: "慢慢写",
-  eyebrow: "WECHAT · NOTES",
+  eyebrow: "WRITING · NOTES",
   subtitle: "把日子里的想法，写成有人味儿的文章",
   description: "一个用文字记录生活与思考的地方。",
   author: "慢慢写",
@@ -254,7 +254,7 @@ function renderCard(entry, index) {
   const latest = index === 0 ? '<span class="latest">最新</span>' : "";
   const tags = renderTags(entry.tags);
   const priority = index === 0 ? ' fetchpriority="high"' : "";
-  return `<article class="card" data-wechat-article="${escapeAttr(entry.slug)}">
+  return `<article class="card" data-article="${escapeAttr(entry.slug)}">
   <a href="${escapeAttr(entry.path)}">
     <div class="card-cover">
       <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="${index < 3 ? "eager" : "lazy"}"${priority} decoding="async">
@@ -277,7 +277,7 @@ function renderCard(entry, index) {
 
 function renderStandaloneCard(entry) {
   const tags = renderTagsInline(entry.tags);
-  return `<article data-wechat-article="${escapeAttr(entry.slug)}" style="break-inside:avoid;margin:0 0 24px;background:#fff;border:1px solid rgba(31,35,40,.08);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(31,35,40,.05);">
+  return `<article data-article="${escapeAttr(entry.slug)}" style="break-inside:avoid;margin:0 0 24px;background:#fff;border:1px solid rgba(31,35,40,.08);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(31,35,40,.05);">
   <a href="${escapeAttr(entry.path)}" style="display:block;color:inherit;text-decoration:none;">
     <div style="aspect-ratio:16/9;background:#e7e9e8;overflow:hidden;">
       <img src="${escapeAttr(entry.cover)}" alt="${escapeAttr(entry.coverAlt || entry.title)}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;">
@@ -304,7 +304,7 @@ function renderIndex(manifest, site) {
     ? sorted.map((entry, index) => renderCard(entry, index)).join("\n")
     : `<section class="empty">
   <h2>还没有文章</h2>
-  <p>把主题或概要发给 <code>wechat-writer</code>，第一篇文章就会出现在这里。</p>
+  <p>把主题或概要发给写作 Agent，第一篇文章就会出现在这里。</p>
 </section>`;
   const latest = sorted[0];
   const jsonLd = {
@@ -350,13 +350,13 @@ function backupIndex() {
 }
 
 function isGeneratedIndex(html) {
-  return /<meta\s+name=["']generator["']\s+content=["']wechat-writer["']/i.test(html);
+  return /<meta\s+name=["']generator["']\s+content=["']slow-writer["']/i.test(html);
 }
 
 function injectCardIntoCustomIndex(html, entry) {
   const slug = entry.slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   let next = html.replace(
-    new RegExp(`<article[^>]*data-wechat-article=["']${slug}["'][\\s\\S]*?<\\/article>`, "gi"),
+    new RegExp(`<article[^>]*data-article=["']${slug}["'][\\s\\S]*?<\\/article>`, "gi"),
     "",
   );
 
@@ -645,7 +645,7 @@ async function main() {
   console.log(`✓ 字数：${result.words} 字，约 ${result.readTime} 分钟`);
   console.log(`✓ 图片：${result.entry.imageCount} 张（1 张封面 + ${result.entry.imageCount - 1} 张配图）`);
   result.warnings.forEach((warning) => console.warn(`! ${warning}`));
-  console.log(`\n预览：打开 ${rootRelative(result.outPath)}，点击底部「复制到公众号」。`);
+  console.log(`\n预览：打开 ${rootRelative(result.outPath)}，点击文末的复制图标即可复制正文。`);
 }
 
 main().catch((err) => {
